@@ -1,4 +1,4 @@
-require 'uv-rays'
+require 'mt-uv-rays'
 
 
 module TestConnect
@@ -40,15 +40,15 @@ module TestServer
 	def on_read(data, ip, port, conection)
 		# ephemeral port is used for sending on windows and linux?
 		# Bound port seems to be used on OSX...
-		# TODO:: Needs investigation, might be a Libuv bug
+		# TODO:: Needs investigation, might be a MTLibuv bug
 		send_datagram(data, ip, 3211)
 	end
 end
 
 
-describe UV::Connection do
+describe MTUV::Connection do
 	before :each do
-		@reactor = Libuv::Reactor.new
+		@reactor = MTLibuv::Reactor.new
 		@reactor.notifier do |error, context|
 			begin
 				@general_failure << "Log called: #{context}\n#{error.message}\n#{error.backtrace.join("\n") if error.backtrace}\n"
@@ -82,8 +82,8 @@ describe UV::Connection do
 	describe 'basic tcp client server' do
 		it "should send some data and shutdown the socket" do
 			@reactor.run { |reactor|
-				UV.start_server '127.0.0.1', 3210, TestServer
-				@klass = UV.connect '127.0.0.1', 3210, TestConnect
+				MTUV.start_server '127.0.0.1', 3210, TestServer
+				@klass = MTUV.connect '127.0.0.1', 3210, TestConnect
 			}
 
 			expect(@general_failure).to eq([])
@@ -95,7 +95,7 @@ describe UV::Connection do
 
 		it "should not call connect on connection failure" do
 			@reactor.run { |reactor|
-				@klass = UV.connect '127.0.0.1', 8123, TestConnect
+				@klass = MTUV.connect '127.0.0.1', 8123, TestConnect
 			}
 
 			expect(@general_failure).to eq([])
@@ -106,27 +106,11 @@ describe UV::Connection do
 		end
 	end
 
-	describe 'basic tcp client server with tls' do
-		it "should send some data and shutdown the socket" do
-			@reactor.run { |reactor|
-				UV.start_server '127.0.0.1', 3212, TestServer, :use_tls
-				@klass = UV.connect '127.0.0.1', 3212, TestConnect
-				@klass.use_tls
-			}
-
-			expect(@general_failure).to eq([])
-			res = @klass.check
-			expect(res[0]).to eq(true)
-			expect(res[1]).to eq(true)
-			expect(res[2]).to eq('hello')
-		end
-	end
-
 	describe 'basic udp client server' do
 		it "should send some data and close the socket" do
 			@reactor.run { |reactor|
-				UV.open_datagram_socket TestServer, '127.0.0.1', 3210
-				@klass = UV.open_datagram_socket TestConnect, '127.0.0.1', 3211
+				MTUV.open_datagram_socket TestServer, '127.0.0.1', 3210
+				@klass = MTUV.open_datagram_socket TestConnect, '127.0.0.1', 3211
 				@klass.send_datagram('hello', '127.0.0.1', 3210)
 			}
 

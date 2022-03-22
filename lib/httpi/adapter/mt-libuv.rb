@@ -2,12 +2,12 @@ require 'httpi'
 
 module HTTPI; end
 module HTTPI::Adapter; end
-class HTTPI::Adapter::Libuv < HTTPI::Adapter::Base
-    register :libuv, deps: %w(uv-rays)
+class HTTPI::Adapter::MTLibuv < HTTPI::Adapter::Base
+    register :mtlibuv, deps: %w(mt-uv-rays)
 
     def initialize(request)
         @request = request
-        @client = ::UV::HttpEndpoint.new request.url
+        @client = ::MTUV::HttpEndpoint.new request.url
     end
 
     attr_reader :client

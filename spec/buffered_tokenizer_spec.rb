@@ -1,10 +1,10 @@
-require 'uv-rays'
+require 'mt-uv-rays'
 
-describe UV::BufferedTokenizer do
+describe MTUV::BufferedTokenizer do
     describe 'delimiter' do
 
         before :each do
-            @buffer = UV::BufferedTokenizer.new({
+            @buffer = MTUV::BufferedTokenizer.new({
                 delimiter: "\n\r",
                 encoding: "ASCII-8BIT"
             })
@@ -74,7 +74,7 @@ describe UV::BufferedTokenizer do
     describe 'indicator with delimiter' do
 
         before :each do
-            @buffer = UV::BufferedTokenizer.new({
+            @buffer = MTUV::BufferedTokenizer.new({
                 delimiter: "\n\r",
                 indicator: "GO"
             })
@@ -175,7 +175,7 @@ describe UV::BufferedTokenizer do
 
     describe 'indicator with length' do
         before :each do
-            @buffer = UV::BufferedTokenizer.new({
+            @buffer = MTUV::BufferedTokenizer.new({
                 indicator: "GO",
                 msg_length: 4 # length without the indicator
             })
@@ -246,7 +246,7 @@ describe UV::BufferedTokenizer do
 
     describe 'buffer size limit with indicator' do
         before :each do
-            @buffer = UV::BufferedTokenizer.new({
+            @buffer = MTUV::BufferedTokenizer.new({
                 delimiter: "\n\r",
                 indicator: "Start",
                 size_limit: 10
@@ -262,7 +262,7 @@ describe UV::BufferedTokenizer do
 
     describe 'buffer size limit without indicator' do
         before :each do
-            @buffer = UV::BufferedTokenizer.new({
+            @buffer = MTUV::BufferedTokenizer.new({
                 delimiter: "\n\r",
                 size_limit: 10
             })

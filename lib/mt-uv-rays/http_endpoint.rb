@@ -4,11 +4,11 @@ require 'uri'
 require 'cookiejar'         # Manages cookies
 require 'http-parser'       # Parses HTTP request / responses
 require 'addressable/uri'   # URI parser
-require 'uv-rays/http/encoding'
-require 'uv-rays/http/request'
-require 'uv-rays/http/parser'
+require 'mt-uv-rays/http/encoding'
+require 'mt-uv-rays/http/request'
+require 'mt-uv-rays/http/parser'
 
-module UV
+module MTUV
     class CookieJar
         def initialize
             @jar = ::CookieJar::Jar.new
@@ -206,7 +206,7 @@ module UV
                 # @parser.eof
                 close_connection unless @connecting
                 next_request
-                ::Libuv::Q.reject(@thread, err)
+                ::MTLibuv::Q.reject(@thread, err)
             })
 
             @queue.unshift(request)

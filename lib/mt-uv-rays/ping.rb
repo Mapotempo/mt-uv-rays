@@ -5,8 +5,8 @@ require 'ipaddr'
 
 # Based on code from https://github.com/chernesk/net-ping/blob/master/lib/net/ping/external.rb
 
-module UV; end
-class UV::Ping
+module MTUV; end
+class MTUV::Ping
 
     def initialize(host, count: 1, interval: 1, timeout: 5)
         @host = host
@@ -43,7 +43,7 @@ class UV::Ping
 
     def nslookup(domain)
         value = nil
-        reactor = Libuv::Reactor.current
+        reactor = MTLibuv::Reactor.current
         begin
             value = reactor.lookup(domain)[0][0]
         rescue => e
@@ -174,7 +174,7 @@ class UV::Ping
         stdout = String.new
         stderr = String.new
 
-        process = Libuv::Reactor.current.spawn(cmd, args: args)
+        process = MTLibuv::Reactor.current.spawn(cmd, args: args)
         process.stdout.progress { |data| stdout << data }
         process.stderr.progress { |data| stderr << data }
         process.stdout.start_read

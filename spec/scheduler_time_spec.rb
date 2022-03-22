@@ -5,14 +5,14 @@
 # Wed Apr 17 06:00:59 JST 2013
 #
 
+require 'mt-uv-rays'
 
-
-describe UV::Scheduler do
+describe MTUV::Scheduler do
 
     describe '.parse_duration' do
 
         def pd(s)
-            UV::Scheduler.parse_duration(s)
+            MTUV::Scheduler.parse_duration(s)
         end
 
         it 'parses duration strings' do
@@ -71,7 +71,7 @@ describe UV::Scheduler do
     describe '.to_duration' do
 
         def td(o, opts={})
-            UV::Scheduler.to_duration(o, opts)
+            MTUV::Scheduler.to_duration(o, opts)
         end
 
         it 'turns integers into duration strings' do
@@ -108,7 +108,7 @@ describe UV::Scheduler do
     describe '.to_duration_hash' do
 
         def tdh(o, opts={})
-            UV::Scheduler.to_duration_hash(o, opts)
+            MTUV::Scheduler.to_duration_hash(o, opts)
         end
 
         it 'turns integers duration hashes' do

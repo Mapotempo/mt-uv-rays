@@ -6,9 +6,9 @@ require 'handsoap'
 module Handsoap
     module Http
         module Drivers
-            class LibuvDriver < AbstractDriver
+            class MTLibuvDriver < AbstractDriver
                 def self.load!
-                    require 'uv-rays'
+                    require 'mt-uv-rays'
                 end
 
                 def send_http_request_async(request)
@@ -38,6 +38,6 @@ module Handsoap
             end
         end
 
-        @@drivers[:libuv] = ::Handsoap::Http::Drivers::LibuvDriver
+        @@drivers[:libuv] = ::Handsoap::Http::Drivers::MTLibuvDriver
     end
 end

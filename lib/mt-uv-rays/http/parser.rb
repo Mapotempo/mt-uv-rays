@@ -2,7 +2,7 @@
 
 require 'active_support/hash_with_indifferent_access'
 
-module UV
+module MTUV
     module Http
         class Headers < ::ActiveSupport::HashWithIndifferentAccess
             # The HTTP version returned

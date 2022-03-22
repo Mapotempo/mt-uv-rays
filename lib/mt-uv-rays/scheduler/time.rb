@@ -27,7 +27,7 @@
 require 'parse-cron'
 
 
-module UV
+module MTUV
     class Scheduler
 
         # Thread safe timezone time class for use with parse-cron

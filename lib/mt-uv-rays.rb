@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
-require 'libuv'
+require 'mt-libuv'
 
-module UV
-    autoload :Ping, 'uv-rays/ping'
+module MTUV
+    autoload :Ping, 'mt-uv-rays/ping'
 
     # In-memory event scheduling
-    autoload :Scheduler, 'uv-rays/scheduler'
+    autoload :Scheduler, 'mt-uv-rays/scheduler'
 
     # Intelligent stream buffering
-    autoload :BufferedTokenizer, 'uv-rays/buffered_tokenizer'
-    autoload :AbstractTokenizer, 'uv-rays/abstract_tokenizer'
+    autoload :BufferedTokenizer, 'mt-uv-rays/buffered_tokenizer'
+    autoload :AbstractTokenizer, 'mt-uv-rays/abstract_tokenizer'
 
     # TCP Connections
-    autoload :TcpServer,          'uv-rays/tcp_server'
-    autoload :Connection,         'uv-rays/connection'
-    autoload :TcpConnection,      'uv-rays/connection'
-    autoload :InboundConnection,  'uv-rays/connection'
-    autoload :OutboundConnection, 'uv-rays/connection'
-    autoload :DatagramConnection, 'uv-rays/connection'
+    autoload :TcpServer,          'mt-uv-rays/tcp_server'
+    autoload :Connection,         'mt-uv-rays/connection'
+    autoload :TcpConnection,      'mt-uv-rays/connection'
+    autoload :InboundConnection,  'mt-uv-rays/connection'
+    autoload :OutboundConnection, 'mt-uv-rays/connection'
+    autoload :DatagramConnection, 'mt-uv-rays/connection'
 
     # HTTP related methods
-    autoload :HttpEndpoint, 'uv-rays/http_endpoint'
+    autoload :HttpEndpoint, 'mt-uv-rays/http_endpoint'
 
 
     # @private
@@ -62,7 +62,7 @@ module UV
         raise ThreadError, "There is no Libuv reactor running on the current thread" if thread.nil?
 
         klass = klass_from_handler(InboundConnection, handler, *args)
-        UV::TcpServer.new thread, server, port, klass, *args
+        MTUV::TcpServer.new thread, server, port, klass, *args
     end
 
     def self.attach_server(sock, handler, *args)
@@ -72,7 +72,7 @@ module UV
         klass = klass_from_handler(InboundConnection, handler, *args)
         sd = sock.respond_to?(:fileno) ? sock.fileno : sock
 
-        UV::TcpServer.new thread, sd, sd, klass, *args
+        MTUV::TcpServer.new thread, sd, sd, klass, *args
     end
 
     def self.open_datagram_socket(handler, server = nil, port = nil, *args)
@@ -84,10 +84,10 @@ module UV
     end
 end
 
-module Libuv
+module MTLibuv
     class Reactor
         def scheduler
-            @scheduler ||= ::UV::Scheduler.new(@reactor)
+            @scheduler ||= ::MTUV::Scheduler.new(@reactor)
             @scheduler
         end
     end

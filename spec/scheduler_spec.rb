@@ -1,9 +1,9 @@
-require 'uv-rays'
+require 'mt-uv-rays'
 
-describe UV::Scheduler do
+describe MTUV::Scheduler do
     before :each do
         @general_failure = []
-        @reactor = Libuv::Reactor.new
+        @reactor = MTLibuv::Reactor.new
         @reactor.notifier do |error, context|
             begin
                 @general_failure << "Log called: #{context}\n#{error.message}\n#{error.backtrace.join("\n") if error.backtrace}\n"

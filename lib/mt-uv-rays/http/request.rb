@@ -6,9 +6,9 @@ require 'cgi'
 require 'rubyntlm'
 require 'net/http/digest_auth'
 
-module UV
+module MTUV
     module Http
-        class Request < ::Libuv::Q::DeferredPromise
+        class Request < ::MTLibuv::Q::DeferredPromise
             include Encoding
 
 
@@ -212,7 +212,7 @@ module UV
 
                 # Set the User-Agent if it hasn't been specified
                 if !head.key?('user-agent')
-                    head['user-agent'] = "UV HttpClient"
+                    head['user-agent'] = "MTUV HttpClient"
                 elsif head['user-agent'].nil?
                     head.delete('user-agent')
                 end

@@ -3,11 +3,11 @@
 require 'set'               # ruby std lib
 require 'bisect'            # insert into a sorted array
 require 'tzinfo'            # timezone information
-require 'uv-rays/scheduler/time'
+require 'mt-uv-rays/scheduler/time'
 
-module UV
+module MTUV
 
-    class ScheduledEvent < ::Libuv::Q::DeferredPromise
+    class ScheduledEvent < ::MTLibuv::Q::DeferredPromise
         # Note:: Comparable should not effect Hashes
         # it will however effect arrays
         include Comparable
@@ -209,7 +209,7 @@ module UV
         #
         # @param time [String] a human readable string representing the time period. 3w2d4h1m2s for example.
         # @param callback [Proc] a block or method to execute when the event triggers
-        # @return [::UV::Repeat]
+        # @return [::MTUV::Repeat]
         def every(time)
             ms = Scheduler.parse_in(time)
             event = Repeat.new(self, ms)
@@ -222,7 +222,7 @@ module UV
         #
         # @param time [String] a human readable string representing the time period. 3w2d4h1m2s for example.
         # @param callback [Proc] a block or method to execute when the event triggers
-        # @return [::UV::OneShot]
+        # @return [::MTUV::OneShot]
         def in(time)
             ms = @reactor.now + Scheduler.parse_in(time)
             event = OneShot.new(self, ms)
@@ -235,7 +235,7 @@ module UV
         #
         # @param time [String, Time] a representation of a date and time that can be parsed
         # @param callback [Proc] a block or method to execute when the event triggers
-        # @return [::UV::OneShot]
+        # @return [::MTUV::OneShot]
         def at(time)
             ms = Scheduler.parse_at(time) - @time_diff
             event = OneShot.new(self, ms)
@@ -248,7 +248,7 @@ module UV
         #
         # @param schedule [String] a standard CRON job line.
         # @param callback [Proc] a block or method to execute when the event triggers
-        # @return [::UV::Repeat]
+        # @return [::MTUV::Repeat]
         def cron(schedule, timezone: nil)
             ms = Scheduler.parse_cron(schedule, timezone: timezone)
             event = Repeat.new(self, ms)

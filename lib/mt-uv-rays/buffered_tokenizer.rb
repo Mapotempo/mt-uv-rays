@@ -15,7 +15,7 @@
 #             end
 #         end
 #     end
-module UV
+module MTUV
     class BufferedTokenizer
         DEFAULT_ENCODING = 'ASCII-8BIT'
 

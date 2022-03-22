@@ -2,8 +2,8 @@
 
 require 'ipaddress' # IP Address parser
 
-module UV
-    class TcpServer < ::Libuv::TCP
+module MTUV
+    class TcpServer < ::MTLibuv::TCP
         def initialize(reactor, server, port, klass, *args)
             super(reactor)
 

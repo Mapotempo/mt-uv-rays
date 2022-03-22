@@ -1,7 +1,7 @@
 # encoding: ASCII-8BIT
 # frozen_string_literal: true
 
-module UV
+module MTUV
     module Http
         module Encoding
             HTTP_REQUEST_HEADER="%s %s HTTP/1.1\r\n"

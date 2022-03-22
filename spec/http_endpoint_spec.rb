@@ -1,4 +1,4 @@
-require 'uv-rays'
+require 'mt-uv-rays'
 
 
 module HttpServer
@@ -169,11 +169,11 @@ module SlowServer
 end
 
 
-describe UV::HttpEndpoint do
+describe MTUV::HttpEndpoint do
 	before :each do
 		@general_failure = []
 
-		@reactor = Libuv::Reactor.new
+		@reactor = MTLibuv::Reactor.new
 		@reactor.notifier do |error, context|
 			begin
 				@general_failure << "Log called: #{context}\n#{error.message}\n#{error.backtrace.join("\n") if error.backtrace}\n"
@@ -197,8 +197,8 @@ describe UV::HttpEndpoint do
 	describe 'basic http request' do
 		it "should send a request then receive a response" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3250, HttpServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:3250'
+				tcp = MTUV.start_server '127.0.0.1', 3250, HttpServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3250'
 
 				request = server.get(:path => '/whatwhat')
 				request.then(proc { |response|
@@ -219,11 +219,11 @@ describe UV::HttpEndpoint do
 		end
 
 		it "should send a request then receive a response using httpi" do
-			require 'httpi/adapter/libuv'
-			HTTPI.adapter = :libuv
+			require 'httpi/adapter/mt-libuv'
+			HTTPI.adapter = :mtlibuv
 
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3250, HttpServer
+				tcp = MTUV.start_server '127.0.0.1', 3250, HttpServer
 
 				begin
 					request = HTTPI::Request.new("http://127.0.0.1:3250/whatwhat")
@@ -250,9 +250,9 @@ describe UV::HttpEndpoint do
 			obj_id = nil
 
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3250, HttpServer
+				tcp = MTUV.start_server '127.0.0.1', 3250, HttpServer
 				block = proc {
-					server = UV::HttpEndpoint.new 'http://127.0.0.1:3250', inactivity_timeout: 300
+					server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3250', inactivity_timeout: 300
 					obj_id = server.object_id
 					objs = WeakRef.new(server)
 
@@ -291,8 +291,8 @@ describe UV::HttpEndpoint do
 		it "should return the response when no length is given and the connection is closed" do
 			# I've seen IoT devices do this (projector screen controllers etc)
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3250, WeirdServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:3250'
+				tcp = MTUV.start_server '127.0.0.1', 3250, WeirdServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3250'
 
 				request = server.get(:path => '/')
 				request.then(proc { |response|
@@ -314,8 +314,8 @@ describe UV::HttpEndpoint do
 
 		it "should send multiple requests on the same connection" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3250, HttpServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:3250'
+				tcp = MTUV.start_server '127.0.0.1', 3250, HttpServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3250'
 
 				request = server.get(path: '/whatwhat', req: 1)
 				request.then(proc { |response|
@@ -349,8 +349,8 @@ describe UV::HttpEndpoint do
 	describe 'old http request' do
 		it "should send a request then receive a response" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3250, OldServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:3250'
+				tcp = MTUV.start_server '127.0.0.1', 3250, OldServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3250'
 
 				request = server.get(:path => '/')
 				request.then(proc { |response|
@@ -370,8 +370,8 @@ describe UV::HttpEndpoint do
 
 		it "should send multiple requests" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3251, OldServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:3251'
+				tcp = MTUV.start_server '127.0.0.1', 3251, OldServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3251'
 
 				request = server.get(:path => '/')
 				request.then(proc { |response|
@@ -405,8 +405,8 @@ describe UV::HttpEndpoint do
 	describe 'Auth support' do
 		it "should perform NTLM auth transparently" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3252, NTLMServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:3252', ntlm: {
+				tcp = MTUV.start_server '127.0.0.1', 3252, NTLMServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3252', ntlm: {
 					user: 'username',
 					password: 'password',
 					domain: 'domain'
@@ -431,8 +431,8 @@ describe UV::HttpEndpoint do
 
 		it "should perform Digest auth transparently" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3252, DigestServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:3252', digest: {
+				tcp = MTUV.start_server '127.0.0.1', 3252, DigestServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3252', digest: {
 					user: 'Mufasa',
 					password: 'Circle Of Life'
 				}
@@ -458,8 +458,8 @@ describe UV::HttpEndpoint do
 	describe 'cookies' do
 		it "should accept cookies and send them on subsequent requests" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 3250, HttpServer
-				@server = UV::HttpEndpoint.new 'http://127.0.0.1:3250'
+				tcp = MTUV.start_server '127.0.0.1', 3250, HttpServer
+				@server = MTUV::HttpEndpoint.new 'http://127.0.0.1:3250'
 
 				request = @server.get(:path => '/whatwhat')
 				expect(request.cookies_hash).to eq({})
@@ -479,8 +479,8 @@ describe UV::HttpEndpoint do
 	describe 'when things go wrong' do
 		it "should reconnect after connection dropped and continue sending requests" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 6353, BrokenServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:6353'
+				tcp = MTUV.start_server '127.0.0.1', 6353, BrokenServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:6353'
 
 				@response = nil
 				request = server.get(:path => '/')
@@ -513,8 +513,8 @@ describe UV::HttpEndpoint do
 
 		it "should reconnect after timeout and continue sending requests" do
 			@reactor.run { |reactor|
-				tcp = UV.start_server '127.0.0.1', 6363, SlowServer
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:6363', inactivity_timeout: 500
+				tcp = MTUV.start_server '127.0.0.1', 6363, SlowServer
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:6363', inactivity_timeout: 500
 
 				@response = nil
 				request = server.get(:path => '/')
@@ -547,7 +547,7 @@ describe UV::HttpEndpoint do
 
 		it "should fail if the server is not available" do
 			@reactor.run { |reactor|
-				server = UV::HttpEndpoint.new 'http://127.0.0.1:6666', inactivity_timeout: 500
+				server = MTUV::HttpEndpoint.new 'http://127.0.0.1:6666', inactivity_timeout: 500
 
 				@response = nil
 				@response2 = nil
@@ -572,7 +572,7 @@ describe UV::HttpEndpoint do
 
 			expect(@general_failure).to eq([])
 			expect(@response).to eq(nil)
-			# Failure will be a UV error
+			# Failure will be a MTUV error
 			#expect(@error).to eq(:connection_failure)
 
 			expect(@response2).to eq(nil)
@@ -584,7 +584,7 @@ describe UV::HttpEndpoint do
 	describe 'proxy support' do
 		it "should work with a HTTP proxy server" do
 			@reactor.run { |reactor|
-				server = UV::HttpEndpoint.new 'http://www.whatsmyip.org', {
+				server = MTUV::HttpEndpoint.new 'http://www.whatsmyip.org', {
 					#inactivity_timeout: 1000,
 					proxy: {
 						host: '212.47.252.49',
@@ -609,7 +609,7 @@ describe UV::HttpEndpoint do
 
 		it "should work with a HTTPS proxy server" do
 			@reactor.run { |reactor|
-				server = UV::HttpEndpoint.new 'https://www.google.com.au', {
+				server = MTUV::HttpEndpoint.new 'https://www.google.com.au', {
 					#inactivity_timeout: 1000,
 					proxy: {
 						host: '212.47.252.49',

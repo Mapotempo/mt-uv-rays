@@ -2,7 +2,7 @@
 
 require 'ipaddress' # IP Address parser
 
-module UV
+module MTUV
     def self.try_connect(tcp, handler, server, port)
         if IPAddress.valid? server
             tcp.finally { handler.on_close }
@@ -18,7 +18,7 @@ module UV
         else
             tcp.reactor.lookup(server, wait: false).then(
                 proc { |result|
-                    UV.try_connect(tcp, handler, result[0][0], port)
+                    MTUV.try_connect(tcp, handler, result[0][0], port)
                 },
                 proc { |failure|
                     # TODO:: Log error on reactor
@@ -134,7 +134,7 @@ module UV
             @port = port
             @transport = @reactor.tcp
 
-            ::UV.try_connect(@transport, self, @server, @port)
+            ::MTUV.try_connect(@transport, self, @server, @port)
         end
 
         def use_tls(args = {})
@@ -154,7 +154,7 @@ module UV
             @server = server || @server
             @port = port || @port
 
-            ::UV.try_connect(@transport, self, @server, @port)
+            ::MTUV.try_connect(@transport, self, @server, @port)
         end
     end
 

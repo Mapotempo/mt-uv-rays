@@ -1,12 +1,12 @@
 require 'faraday'
-require 'uv-rays'
+require 'mt-uv-rays'
 
 
 module Faraday
   class Adapter < Middleware
-    register_middleware libuv: :Libuv
+    register_middleware libuv: :MTLibuv
 
-    class Libuv < Faraday::Adapter
+    class MTLibuv < Faraday::Adapter
       def initialize(app, connection_options = {})
         @connection_options = connection_options
         super(app)

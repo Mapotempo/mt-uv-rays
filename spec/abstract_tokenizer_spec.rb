@@ -1,8 +1,8 @@
-require 'uv-rays'
+require 'mt-uv-rays'
 
-describe UV::AbstractTokenizer do
+describe MTUV::AbstractTokenizer do
     before :each do
-        @buffer = UV::AbstractTokenizer.new({
+        @buffer = MTUV::AbstractTokenizer.new({
             indicator: "Start",
             callback: lambda { |data|
                 return 4 if data.length > 3
@@ -80,7 +80,7 @@ describe UV::AbstractTokenizer do
     end
 
     it "should work with regular expressions" do
-        @buffer = UV::AbstractTokenizer.new({
+        @buffer = MTUV::AbstractTokenizer.new({
             indicator: /Start/i,
             callback: lambda { |data|
                 return 4 if data.length > 3
@@ -109,7 +109,7 @@ describe UV::AbstractTokenizer do
         # i.e. there is a header that defines message length
         msg1 = "\x0612345\x081234567\x031"
 
-        @buffer = UV::AbstractTokenizer.new({
+        @buffer = MTUV::AbstractTokenizer.new({
             callback: lambda { |data|
                 len = data.bytes[0]
                 if data.length >= len
