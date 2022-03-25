@@ -73,7 +73,7 @@ module Faraday
     end
 
     def perform_request(env, opts)
-      conn = ::UV::HttpEndpoint.new(env[:url].to_s, opts.merge!(@connection_options))
+      conn = ::MTUV::HttpEndpoint.new(env[:url].to_s, opts.merge!(@connection_options))
       resp = conn.request(env[:method].to_s.downcase.to_sym,
         headers: env[:request_headers],
         path: "/#{env[:url].to_s.split('/', 4)[-1]}",
