@@ -210,10 +210,10 @@ module MTUV
         # @param time [String] a human readable string representing the time period. 3w2d4h1m2s for example.
         # @param callback [Proc] a block or method to execute when the event triggers
         # @return [::MTUV::Repeat]
-        def every(time)
+        def every(time, &block)
             ms = Scheduler.parse_in(time)
             event = Repeat.new(self, ms)
-            event.progress &Proc.new if block_given?
+            event.progress &block if block_given?
             schedule(event)
             event
         end
@@ -223,10 +223,10 @@ module MTUV
         # @param time [String] a human readable string representing the time period. 3w2d4h1m2s for example.
         # @param callback [Proc] a block or method to execute when the event triggers
         # @return [::MTUV::OneShot]
-        def in(time)
+        def in(time, &block)
             ms = @reactor.now + Scheduler.parse_in(time)
             event = OneShot.new(self, ms)
-            event.progress &Proc.new if block_given?
+            event.progress &block if block_given?
             schedule(event)
             event
         end
@@ -236,10 +236,10 @@ module MTUV
         # @param time [String, Time] a representation of a date and time that can be parsed
         # @param callback [Proc] a block or method to execute when the event triggers
         # @return [::MTUV::OneShot]
-        def at(time)
+        def at(time, &block)
             ms = Scheduler.parse_at(time) - @time_diff
             event = OneShot.new(self, ms)
-            event.progress &Proc.new if block_given?
+            event.progress &block if block_given?
             schedule(event)
             event
         end
@@ -249,10 +249,10 @@ module MTUV
         # @param schedule [String] a standard CRON job line.
         # @param callback [Proc] a block or method to execute when the event triggers
         # @return [::MTUV::Repeat]
-        def cron(schedule, timezone: nil)
+        def cron(schedule, timezone: nil, &block)
             ms = Scheduler.parse_cron(schedule, timezone: timezone)
             event = Repeat.new(self, ms)
-            event.progress &Proc.new if block_given?
+            event.progress &block if block_given?
             schedule(event)
             event
         end
